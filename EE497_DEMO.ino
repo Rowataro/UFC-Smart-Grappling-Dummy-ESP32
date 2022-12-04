@@ -1,12 +1,19 @@
 #include <Arduino.h>
 #include "HX711.h"
 #include "soc/rtc.h"
+#include "BluetoothSerial.h"
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
 
 HX711 scale; //Using this library for HX711 load cell amplifier: https://github.com/bogde/HX711
 const int LOADCELL_DOUT_PIN = 4;
 const int LOADCELL_SCK_PIN = 5;
 const uint8_t tare_readings = 100;
 const uint8_t scale_readings = 30;
+
+BluetoothSerial SerialBLE;
 
 void setup() {
   Serial.begin(115200);
@@ -22,6 +29,9 @@ void setup() {
   while(!scale.is_ready());
   Serial.println("Scale is setup! ");
 
+  SerialBLE.begin("HX711_Scale");
+  
+  Serial.println("You can now pair HX711_Scale via bluetooth.");
 }
 
 void loop() {
@@ -34,5 +44,6 @@ void loop() {
     grams = 0.0;
   }
   Serial.print("Reading: "); Serial.print(grams, 2); Serial.println(" g");
+  SerialBLE.print(grams, 2); SerialBLE.println(" g");
 }
 
