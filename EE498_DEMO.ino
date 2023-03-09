@@ -41,7 +41,7 @@ void setup() {
 
     Serial.begin(115200);
   Serial.println("Starting BLE work!");
-  BLEDevice::init("Jon");
+  BLEDevice::init("ESP32");
   pServer = BLEDevice::createServer();
   pService = pServer->createService(SERVICE_UUID);
 
